@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import { Eye, EyeOff } from "lucide-react"
+import { toast } from "sonner"
 
 import { cn } from "@/lib/utils"
 import { CONFIG } from "@/lib/config"
@@ -24,16 +25,13 @@ export function RegisterForm({
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [successMsg, setSuccessMsg] = useState<string | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
-    setSuccessMsg(null)
     setLoading(true)
 
     try {
-      // Menggunakan URL dasar terpusat dari konfigurasi sistem
       const res = await fetch(`${CONFIG.API_BASE_URL}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -42,15 +40,19 @@ export function RegisterForm({
 
       const data = await res.json()
       if (res.ok) {
-        setSuccessMsg("Akun berhasil dibuat! Mengalihkan ke halaman masuk...")
+        // Pemanggilan toast monokrom khas Shadcn UI saat sukses mendaftar
+        toast("Pendaftaran Berhasil", {
+          description: "Akun Anda telah tersimpan. Mengalihkan ke halaman masuk...",
+        })
         setTimeout(() => {
           if (onSuccess) onSuccess()
         }, 1500)
       } else {
-        setError(data.error || "Gagal mendaftarkan akun.")
+        // Kesalahan validasi/email ganda dimunculkan secara inline di atas form
+        setError(data.error || "Gagal mendaftarkan akun. Email mungkin sudah terpakai.")
       }
     } catch (err) {
-      setError("Gagal terhubung ke server backend.")
+      setError("Gagal menghubungi server backend lokal.")
     } finally {
       setLoading(false)
     }
@@ -66,15 +68,10 @@ export function RegisterForm({
           </p>
         </div>
 
+        {/* Kotak Error Inline Halaman Formulir */}
         {error && (
-          <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive border border-destructive/20 text-center">
+          <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20 text-center font-medium">
             {error}
-          </div>
-        )}
-
-        {successMsg && (
-          <div className="rounded-md bg-green-500/15 p-3 text-sm text-green-600 border border-green-500/20 text-center font-medium">
-            {successMsg}
           </div>
         )}
 
@@ -104,7 +101,6 @@ export function RegisterForm({
           <div className="grid gap-2">
             <Label htmlFor="reg-password">Password</Label>
             
-            {/* Input Password Terintegrasi dengan Tombol Eye Toggle */}
             <div className="relative">
               <Input
                 id="reg-password"

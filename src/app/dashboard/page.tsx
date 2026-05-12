@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { LogOut, ShieldCheck, User as UserIcon } from "lucide-react";
+import { toast } from "sonner";
 
 import { CONFIG } from "@/lib/config";
 import { Button } from "@/components/ui/button";
@@ -20,7 +21,6 @@ export default function DashboardPage() {
       return;
     }
 
-    // Verifikasi token ke backend menggunakan URL terpusat
     fetch(`${CONFIG.API_BASE_URL}/auth/me`, {
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -34,12 +34,20 @@ export default function DashboardPage() {
       })
       .catch(() => {
         localStorage.removeItem("laci_token");
+        // Pemanggilan toast monokrom khas Shadcn UI
+        toast("Sesi Berakhir", {
+          description: "Sesi Anda telah kadaluarsa. Silakan masuk kembali.",
+        });
         router.replace("/login");
       });
   }, [router]);
 
   const handleLogout = () => {
     localStorage.removeItem("laci_token");
+    // Pemanggilan toast monokrom khas Shadcn UI
+    toast("Berhasil Keluar", {
+      description: "Sesi Anda telah diakhiri dengan aman.",
+    });
     router.replace("/login");
   };
 

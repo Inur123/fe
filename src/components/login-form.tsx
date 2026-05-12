@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import { Eye, EyeOff } from "lucide-react"
+import { toast } from "sonner"
 
 import { cn } from "@/lib/utils"
 import { CONFIG } from "@/lib/config"
@@ -30,7 +31,6 @@ export function LoginForm({
     setLoading(true)
 
     try {
-      // Menggunakan URL dasar terpusat dari konfigurasi sistem
       const res = await fetch(`${CONFIG.API_BASE_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -40,12 +40,17 @@ export function LoginForm({
       const data = await res.json()
       if (res.ok) {
         localStorage.setItem("laci_token", data.token)
+        // Pemanggilan toast monokrom khas Shadcn UI saat sukses
+        toast("Login Berhasil", {
+          description: `Selamat datang kembali, ${data.user?.name || "Pengguna"}.`,
+        })
         if (onSuccess) onSuccess(data.user, data.token)
       } else {
-        setError(data.error || "Email atau password salah.")
+        // Kesalahan sandi/email dimunculkan secara inline di halaman form
+        setError(data.error || "Email atau password yang Anda masukkan salah.")
       }
     } catch (err) {
-      setError("Gagal terhubung ke server backend.")
+      setError("Gagal menghubungi server backend lokal.")
     } finally {
       setLoading(false)
     }
@@ -61,8 +66,9 @@ export function LoginForm({
           </p>
         </div>
 
+        {/* Kotak Error Inline Halaman Formulir */}
         {error && (
-          <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive border border-destructive/20 text-center">
+          <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20 text-center font-medium">
             {error}
           </div>
         )}
@@ -91,7 +97,6 @@ export function LoginForm({
               </a>
             </div>
             
-            {/* Input Password Terintegrasi dengan Tombol Eye Toggle */}
             <div className="relative">
               <Input
                 id="password"
