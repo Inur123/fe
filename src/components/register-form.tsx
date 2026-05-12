@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Eye, EyeOff } from "lucide-react"
+import { Eye, EyeOff, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 
 import { cn } from "@/lib/utils"
@@ -41,12 +41,10 @@ export function RegisterForm({
       const data = await res.json()
       if (res.ok) {
         // Pemanggilan toast monokrom khas Shadcn UI saat sukses mendaftar
-        toast("Pendaftaran Berhasil", {
-          description: "Akun Anda telah tersimpan. Mengalihkan ke halaman masuk...",
+        toast.success("Pendaftaran Berhasil!", {
+          description: "Akun Anda berhasil didaftarkan. Silakan masuk.",
         })
-        setTimeout(() => {
-          if (onSuccess) onSuccess()
-        }, 1500)
+        if (onSuccess) onSuccess()
       } else {
         // Kesalahan validasi/email ganda dimunculkan secara inline di atas form
         setError(data.error || "Gagal mendaftarkan akun. Email mungkin sudah terpakai.")
@@ -126,8 +124,15 @@ export function RegisterForm({
               </button>
             </div>
           </div>
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Mendaftarkan..." : "Buat Akun"}
+          <Button type="submit" className="w-full flex items-center justify-center gap-2" disabled={loading}>
+            {loading ? (
+              <>
+                <Loader2 className="size-4 animate-spin" />
+                Mendaftarkan...
+              </>
+            ) : (
+              "Buat Akun"
+            )}
           </Button>
         </div>
       </form>

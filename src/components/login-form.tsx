@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Eye, EyeOff } from "lucide-react"
+import { Eye, EyeOff, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 
 import { cn } from "@/lib/utils"
@@ -120,8 +120,15 @@ export function LoginForm({
               </button>
             </div>
           </div>
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Memproses..." : "Masuk"}
+          <Button type="submit" className="w-full flex items-center justify-center gap-2" disabled={loading}>
+            {loading ? (
+              <>
+                <Loader2 className="size-4 animate-spin" />
+                Memverifikasi...
+              </>
+            ) : (
+              "Masuk"
+            )}
           </Button>
         </div>
       </form>
