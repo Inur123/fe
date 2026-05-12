@@ -3,6 +3,7 @@
 import * as React from "react";
 import { usePathname } from "next/navigation";
 import {
+  Calendar,
   Command,
   LayoutDashboard,
   ShieldCheck,
@@ -31,6 +32,11 @@ const data = {
       title: "Role & Permission",
       url: "/roles",
       icon: ShieldCheck,
+    },
+    {
+      title: "Periodisasi",
+      url: "/periods",
+      icon: Calendar,
     },
   ],
   projects: [],
@@ -81,9 +87,16 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
       (p) => p.name === "get_roles" || p.name === "get_roles_list"
     );
 
-  // Filter dinamis: Sembunyikan item Role & Permission jika tidak memiliki hak akses
+  const hasPeriodsAccess =
+    isLoadingSession ||
+    isSuperadmin ||
+    pathname.startsWith("/periods") ||
+    (user?.role?.permissions || []).some((p) => p.name === "get_periods");
+
+  // Filter dinamis: Sembunyikan item jika tidak memiliki hak akses
   const filteredNavMain = data.navMain.filter((item) => {
     if (item.title === "Role & Permission") return hasRoleAccess;
+    if (item.title === "Periodisasi") return hasPeriodsAccess;
     return true;
   });
 

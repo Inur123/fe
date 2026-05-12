@@ -147,6 +147,17 @@ export default function CreateRolePage() {
       post_auth_login: "Diizinkan Masuk (Login) ke Aplikasi",
       post_auth_logout: "Diizinkan Keluar (Logout) dari Aplikasi",
       post_auth_register: "Menerima Pendaftaran Anggota Baru",
+      get_periods: "Melihat Masa Kepengurusan (Periode)",
+      get_periods_active: "Mengecek Masa Kepengurusan Aktif",
+      post_periods: "Menambahkan Masa Kepengurusan Baru",
+      "put_periods_:id_active": "Mengalihkan Status Masa Kepengurusan Aktif",
+      "put_periods_:id": "Memodifikasi Nama Masa Kepengurusan",
+      "delete_periods_:id": "Menghapus Entitas Masa Kepengurusan",
+      get_archives: "Membaca Daftar Arsip Surat Digital",
+      "get_archives_:id": "Melihat Rincian Arsip Surat Spesifik",
+      post_archives: "Mengunggah Dokumen Arsip Surat Baru",
+      "put_archives_:id": "Memperbarui Rincian Dokumen Arsip Surat",
+      "delete_archives_:id": "Menghapus Dokumen Arsip Surat Digital",
     };
     if (map[permName]) return map[permName];
 
@@ -173,6 +184,17 @@ export default function CreateRolePage() {
       post_auth_login: "Wajib dicentang! Jika dicabut, pemilik peran ini akan diblokir saat mencoba login.",
       post_auth_logout: "Mengizinkan pengguna untuk menekan tombol keluar dari akun.",
       post_auth_register: "Mencatat informasi pendaftar baru ke dalam database keanggotaan.",
+      get_periods: "Mengizinkan akses menu Masa Khidmat / Kepengurusan di antarmuka sistem.",
+      get_periods_active: "Diperlukan untuk memvalidasi dan memuat identitas periode yang sedang berjalan.",
+      post_periods: "Memunculkan formulir untuk merancang dan mendefinisikan masa kepengurusan baru.",
+      "put_periods_:id_active": "Wewenang untuk mengambil alih dan mengaktifkan masa kepengurusan terpilih.",
+      "put_periods_:id": "Melegalkan tombol ubah untuk memperbaiki salah ketik pada label periode.",
+      "delete_periods_:id": "Wewenang mutlak untuk menghapus entitas kepengurusan yang tidak aktif.",
+      get_archives: "Membuka menu pengarsipan untuk melacak dan mengunduh surat menyurat organisasi.",
+      "get_archives_:id": "Membuka pratinjau digital untuk membaca rincian surat secara menyeluruh.",
+      post_archives: "Mengizinkan pengurus untuk mengarsipkan surat masuk dan keluar baru.",
+      "put_archives_:id": "Wewenang administratif untuk mengoreksi rincian dan lampiran arsip surat.",
+      "delete_archives_:id": "Menghapus dokumen arsip digital dari pencatatan periode organisasi.",
     };
     return map[permName] || defaultDesc || "";
   };
@@ -405,17 +427,17 @@ export default function CreateRolePage() {
                 )}
 
                 {/* Kelompok Lainnya */}
-                {permissions.filter((p) => !p.name.includes("auth") && !p.name.includes("roles")).length > 0 && (
+                {permissions.filter((p) => !p.name.includes("auth") && !p.name.includes("roles") && !p.name.includes("archives")).length > 0 && (
                   <div className="space-y-2.5">
                     <div className="flex items-center gap-2 pb-1.5 border-b border-zinc-100">
                       <span className="w-1 h-3.5 bg-emerald-500 rounded-full" />
                       <h3 className="text-xs font-bold text-zinc-800 uppercase tracking-wide">
-                        Modul Lainnya
+                        Periodisasi
                       </h3>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                       {permissions
-                        .filter((p) => !p.name.includes("auth") && !p.name.includes("roles"))
+                        .filter((p) => !p.name.includes("auth") && !p.name.includes("roles") && !p.name.includes("archives"))
                         .map((perm) => {
                           const isSelected = selectedPerms.includes(perm.id);
                           return (

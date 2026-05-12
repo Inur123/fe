@@ -130,6 +130,17 @@ export default function RolesPage() {
       post_auth_login: "Diizinkan Masuk (Login) ke Aplikasi",
       post_auth_logout: "Diizinkan Keluar (Logout) dari Aplikasi",
       post_auth_register: "Menerima Pendaftaran Anggota Baru",
+      get_periods: "Melihat Masa Kepengurusan (Periode)",
+      get_periods_active: "Mengecek Masa Kepengurusan Aktif",
+      post_periods: "Menambahkan Masa Kepengurusan Baru",
+      "put_periods_:id_active": "Mengalihkan Status Masa Kepengurusan Aktif",
+      "put_periods_:id": "Memodifikasi Nama Masa Kepengurusan",
+      "delete_periods_:id": "Menghapus Entitas Masa Kepengurusan",
+      get_archives: "Membaca Daftar Arsip Surat Digital",
+      "get_archives_:id": "Melihat Rincian Arsip Surat Spesifik",
+      post_archives: "Mengunggah Dokumen Arsip Surat Baru",
+      "put_archives_:id": "Memperbarui Rincian Dokumen Arsip Surat",
+      "delete_archives_:id": "Menghapus Dokumen Arsip Surat Digital",
     };
     if (map[name]) return map[name];
 
@@ -153,29 +164,27 @@ export default function RolesPage() {
     );
 
   return (
-    <SidebarProvider className="flex flex-row h-svh w-full overflow-hidden">
+    <SidebarProvider>
       <AppSidebar user={user} />
-      <SidebarInset className="flex flex-1 flex-col h-svh overflow-hidden w-auto md:ml-0 md:pl-0 transition-all duration-200 bg-zinc-50/50">
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b border-border/40 bg-white shadow-xs z-30">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1 cursor-pointer md:hidden" />
-            <Separator orientation="vertical" className="mr-2 h-4 md:hidden" />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbPage className="font-semibold text-zinc-900">
-                    Role & Permission
-                  </BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
+      <SidebarInset className="flex flex-1 flex-col min-h-svh w-full bg-zinc-50/50 transition-all duration-200">
+        <header className="sticky top-0 flex h-16 shrink-0 items-center gap-2 border-b border-border/40 bg-white/95 backdrop-blur-md shadow-xs z-30 px-4">
+          <SidebarTrigger className="-ml-1 cursor-pointer md:hidden" />
+          <Separator orientation="vertical" className="mr-2 h-4 md:hidden" />
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbPage className="font-semibold text-zinc-900">
+                  Role & Permission
+                </BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
         </header>
 
         {loading ? (
           <RolesSkeleton count={roles.length || 2} />
         ) : (
-          <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-6 max-w-7xl mx-auto w-full animate-in fade-in duration-200">
+          <main className="flex-1 p-4 md:p-6 lg:p-8 flex flex-col gap-6 max-w-7xl mx-auto w-full animate-in fade-in duration-200">
             {/* Header Konten */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-zinc-200/80 shadow-xs">
               <div>
@@ -305,7 +314,7 @@ export default function RolesPage() {
                 </div>
               )}
             </div>
-          </div>
+          </main>
         )}
       </SidebarInset>
     </SidebarProvider>
