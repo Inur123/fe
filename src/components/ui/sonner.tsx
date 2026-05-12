@@ -15,7 +15,6 @@ const Toaster = ({ ...props }: ToasterProps) => {
       richColors={false}
       toastOptions={{
         classNames: {
-          // Kelas dipaksa secara eksplisit menjadi putih bersih dengan teks hitam elegan
           toast:
             "group toast group-[.toaster]:bg-white group-[.toaster]:text-zinc-950 group-[.toaster]:border-zinc-200 shadow-xl rounded-xl border",
           description: "group-[.toast]:text-zinc-500",
