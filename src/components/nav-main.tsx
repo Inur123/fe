@@ -35,13 +35,25 @@ export function NavMain({
 }) {
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
+      <SidebarGroupLabel>Menu Utama</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible key={item.title} asChild defaultOpen={item.isActive}>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip={item.title}>
-                <a href={item.url}>
+              <SidebarMenuButton
+                asChild
+                tooltip={item.title}
+                isActive={item.isActive}
+                className="cursor-pointer"
+              >
+                <a
+                  href={item.url}
+                  onClick={(e) => {
+                    if (item.isActive) {
+                      e.preventDefault()
+                    }
+                  }}
+                >
                   <item.icon />
                   <span>{item.title}</span>
                 </a>
