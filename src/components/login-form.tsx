@@ -40,6 +40,12 @@ export function LoginForm({
       const data = await res.json()
       if (res.ok) {
         localStorage.setItem("laci_token", data.token)
+        // Simpan role & perms ke cache agar sidebar bisa membacanya sebelum fetch /me selesai
+        if (data.user?.role?.name) {
+          localStorage.setItem("laci_role", data.user.role.name);
+          const perms = (data.user.role.permissions || []).map((p: any) => p.name);
+          localStorage.setItem("laci_perms", JSON.stringify(perms));
+        }
         // Pemanggilan toast monokrom khas Shadcn UI saat sukses
         toast("Login Berhasil", {
           description: `Selamat datang kembali, ${data.user?.name || "Pengguna"}.`,

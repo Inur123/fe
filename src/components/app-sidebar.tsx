@@ -7,6 +7,7 @@ import {
   Command,
   LayoutDashboard,
   ShieldCheck,
+  Users,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -23,23 +24,11 @@ import {
 
 const data = {
   navMain: [
-    {
-      title: "Dashboard",
-      url: "/dashboard",
-      icon: LayoutDashboard,
-    },
-    {
-      title: "Role & Permission",
-      url: "/roles",
-      icon: ShieldCheck,
-    },
-    {
-      title: "Periodisasi",
-      url: "/periods",
-      icon: Calendar,
-    },
+    { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+    { title: "Role & Permission", url: "/roles", icon: ShieldCheck },
+    { title: "Periodisasi", url: "/periods", icon: Calendar },
+    { title: "Manajemen Pengguna", url: "/users", icon: Users },
   ],
-  projects: [],
 };
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
@@ -57,57 +46,66 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
 export function AppSidebar({ user, ...props }: AppSidebarProps) {
   const pathname = usePathname();
 
-  // Menyalurkan profil pengguna terautentikasi jika ada, atau menggunakan fallback asli
-  const currentUser = user || {
-    name: " ",
-    email: " ",
-    avatar: "",
-  };
+  // Baca role dari localStorage SINKRON saat useState pertama kali diinisialisasi.
+  // Ini terjadi SEBELUM render pertama di client, sehingga tidak ada flash sama sekali.
+  // Di server (SSR), typeof window = 'undefined' → null (suppressHydrationWarning di NavMain menangani mismatch ini).
+  const [cachedRole, setCachedRole] = React.useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem("laci_role");
+  });
 
-  // Jika user masih bernilai null, berarti aplikasi sedang memuat/memverifikasi profil dari server.
-  // Kita terapkan strategi 'Optimistic Default Rendering' agar HTML mentah dari server (SSR) 
-  // sudah mencakup menu Role & Permission. Ini menjamin Superadmin mengalami ZERO FLICKER saat refresh!
-  const isLoadingSession = user === null;
-  const isSuperadmin = user?.role?.name === "Superadmin";
-  const isRolesRoute = pathname.startsWith("/roles");
-
-  // Sinkronisasi senyap cache otorisasi ke penyimpanan lokal
+  // Sinkronisasi cache saat data user dari API tiba (untuk perubahan di sesi berjalan)
   React.useEffect(() => {
-    if (user?.role?.name) {
-      localStorage.setItem("laci_cached_role", user.role.name);
+    if (user) {
+      if (user.role?.name) {
+        localStorage.setItem("laci_role", user.role.name);
+        document.documentElement.setAttribute("data-role", user.role.name);
+      }
+      
+      const permissions = (user.role?.permissions || []).map((p: any) => p.name);
+      localStorage.setItem("laci_perms", JSON.stringify(permissions));
+      
+      // Update individual data attributes for granular CSS control
+      const permMap: Record<string, string> = {
+        'get_roles': 'data-perm-roles',
+        'get_periods': 'data-perm-periods',
+        'get_users': 'data-perm-users'
+      };
+      
+      Object.entries(permMap).forEach(([perm, attr]) => {
+        if (permissions.includes(perm) || (user.role?.name === 'Superadmin')) {
+          document.documentElement.setAttribute(attr, "true");
+        } else {
+          document.documentElement.removeAttribute(attr);
+        }
+      });
+
+      setCachedRole(user.role?.name || "Member");
     }
   }, [user]);
 
-  // Hak akses dipertahankan selama masa muat awal, atau jika profil telah terbukti memiliki wewenang
-  const hasRoleAccess =
-    isLoadingSession ||
-    isSuperadmin ||
-    isRolesRoute ||
-    (user?.role?.permissions || []).some(
-      (p) => p.name === "get_roles" || p.name === "get_roles_list"
-    );
+  const currentUser = user || { name: " ", email: " ", avatar: "" };
 
-  const hasPeriodsAccess =
-    isLoadingSession ||
-    isSuperadmin ||
-    pathname.startsWith("/periods") ||
-    (user?.role?.permissions || []).some((p) => p.name === "get_periods");
+  // Efektif role: data live (API) diutamakan, fallback ke cache localStorage
+  const effectiveRole = user?.role?.name ?? cachedRole;
+  const isSuperadmin = effectiveRole === "Superadmin";
 
-  // Filter dinamis: Sembunyikan item jika tidak memiliki hak akses
-  const filteredNavMain = data.navMain.filter((item) => {
-    if (item.title === "Role & Permission") return hasRoleAccess;
-    if (item.title === "Periodisasi") return hasPeriodsAccess;
-    return true;
+  // Kita tidak lagi memfilter item di JS secara agresif untuk disembunyikan total,
+  // tapi kita tandai mana yang perlu class khusus untuk CSS.
+  const dynamicNavMain = data.navMain.map((item) => {
+    let className = "";
+    if (item.title === "Role & Permission") className = "laci-menu-roles";
+    if (item.title === "Periodisasi") className = "laci-menu-periods";
+    if (item.title === "Manajemen Pengguna") className = "laci-menu-users";
+
+    return {
+      ...item,
+      isActive: pathname.startsWith(item.url),
+      className,
+    };
   });
 
-  // Pemetaan dinamis status aktif berdasarkan rute peramban saat ini
-  const dynamicNavMain = filteredNavMain.map((item) => ({
-    ...item,
-    isActive: pathname.startsWith(item.url),
-  }));
-
   return (
-    // Menggunakan varian inset bawaan asli sidebar-08
     <Sidebar variant="sidebar" {...props}>
       <SidebarHeader>
         <SidebarMenu>

@@ -2,6 +2,21 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Role-based Menu Access Control */
+.laci-menu-roles, .laci-menu-periods, .laci-menu-users { 
+  display: none !important; 
+}
+
+html[data-role="Superadmin"] .laci-menu-roles,
+html[data-role="Superadmin"] .laci-menu-periods,
+html[data-role="Superadmin"] .laci-menu-users { 
+  display: block !important; 
+}
+
+html[data-perm-roles="true"] .laci-menu-roles { display: block !important; }
+html[data-perm-periods="true"] .laci-menu-periods { display: block !important; }
+html[data-perm-users="true"] .laci-menu-users { display: block !important; }
+
 @layer base {
   :root {
     --background: 0 0% 100%;

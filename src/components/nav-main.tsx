@@ -28,6 +28,8 @@ export function NavMain({
     url: string
     icon: LucideIcon
     isActive?: boolean
+    hidden?: boolean
+    className?: string
     items?: {
       title: string
       url: string
@@ -40,7 +42,10 @@ export function NavMain({
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible key={item.title} asChild defaultOpen={item.isActive}>
-            <SidebarMenuItem>
+            <SidebarMenuItem
+              suppressHydrationWarning
+              className={item.className}
+            >
               <SidebarMenuButton
                 asChild
                 tooltip={item.title}
