@@ -264,6 +264,7 @@ export function RoleForm({ roleId, mode }: RoleFormProps) {
                             { title: "Otentikasi & Sesi Pengguna", color: "bg-amber-500", filter: "auth" },
                             { title: "Manajemen Peran & Hak Akses", color: "bg-indigo-500", filter: "roles" },
                             { title: "Manajemen Keanggotaan", color: "bg-emerald-500", filter: "users" },
+                            { title: "Manajemen Arsip Surat", color: "bg-blue-500", filter: "archives" },
                             { title: "Periodisasi Kepengurusan", color: "bg-rose-500", filter: "other" }
                         ].map((group) => {
                             const filteredPerms = permissions.filter((p) => {

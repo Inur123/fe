@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   Calendar,
   Command,
+  Files,
   LayoutDashboard,
   ShieldCheck,
   Users,
@@ -25,6 +26,7 @@ import {
 const data = {
   navMain: [
     { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+    { title: "Arsip Surat", url: "/archives", icon: Files },
     { title: "Role & Permission", url: "/roles", icon: ShieldCheck },
     { title: "Periodisasi", url: "/periods", icon: Calendar },
     { title: "Manajemen Pengguna", url: "/users", icon: Users },
@@ -69,7 +71,8 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
       const permMap: Record<string, string> = {
         'get_roles': 'data-perm-roles',
         'get_periods': 'data-perm-periods',
-        'get_users': 'data-perm-users'
+        'get_users': 'data-perm-users',
+        'get_archives': 'data-perm-archives'
       };
       
       Object.entries(permMap).forEach(([perm, attr]) => {
@@ -97,6 +100,7 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
     if (item.title === "Role & Permission") className = "laci-menu-roles";
     if (item.title === "Periodisasi") className = "laci-menu-periods";
     if (item.title === "Manajemen Pengguna") className = "laci-menu-users";
+    if (item.title === "Arsip Surat") className = "laci-menu-archives";
 
     return {
       ...item,
